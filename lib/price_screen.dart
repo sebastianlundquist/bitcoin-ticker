@@ -9,8 +9,10 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  String selectedCurrency = currenciesList.first;
-  String btcText = '1 BTC = ? USD';
+  String selectedCurrency = currenciesList
+      .firstWhere((currency) => currency.contains('SEK'), orElse: () => null);
+  Map<String, String> coinValues = {};
+  bool isWaiting = false;
 
   DropdownButton<String> androidDropdown() {
     var list = List<DropdownMenuItem<String>>();
@@ -45,10 +47,12 @@ class _PriceScreenState extends State<PriceScreen> {
   }
 
   void getData(String currency) async {
+    isWaiting = true;
     try {
-      double data = await CoinData().getCoinData(currency);
+      var data = await CoinData().getCoinData(currency);
+      isWaiting = false;
       setState(() {
-        btcText = '1 BTC = ${data.toStringAsFixed(2)} $currency';
+        coinValues = data;
       });
     } catch (e) {
       print(e);
@@ -58,7 +62,7 @@ class _PriceScreenState extends State<PriceScreen> {
   @override
   void initState() {
     super.initState();
-    getData('USD');
+    getData(selectedCurrency);
   }
 
   @override

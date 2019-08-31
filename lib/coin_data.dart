@@ -1,4 +1,5 @@
-import 'networking.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 const List<String> currenciesList = [
   'AUD',
@@ -30,11 +31,22 @@ const List<String> cryptoList = [
   'LTC',
 ];
 
+const url = 'https://apiv2.bitcoinaverage.com/indices/global/ticker';
+
 class CoinData {
-  Future<double> getCoinData(String currency) async {
-    NetworkHelper networkHelper = NetworkHelper(
-        'https://apiv2.bitcoinaverage.com/indices/global/ticker/BTC$currency');
-    Map<String, dynamic> coinData = await networkHelper.getData();
-    return coinData['last'];
+  Future getCoinData(String currency) async {
+    Map<String, String> prices = {};
+    for (String crypto in cryptoList) {
+      http.Response response = await http.get('$url/$crypto$currency');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        double price = decodedData['last'];
+        prices[crypto] = price.toStringAsFixed(2);
+      } else {
+        print(response.statusCode);
+        throw 'Get request unsuccessful.';
+      }
+    }
+    return prices;
   }
 }
