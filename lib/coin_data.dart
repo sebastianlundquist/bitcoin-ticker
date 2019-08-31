@@ -31,9 +31,9 @@ const List<String> cryptoList = [
 ];
 
 class CoinData {
-  Future<double> getCoinData() async {
+  Future<double> getCoinData(String currency) async {
     NetworkHelper networkHelper = NetworkHelper(
-        'https://apiv2.bitcoinaverage.com/indices/global/ticker/BTCUSD');
+        'https://apiv2.bitcoinaverage.com/indices/global/ticker/BTC$currency');
     Map<String, dynamic> coinData = await networkHelper.getData();
     return coinData['last'];
   }

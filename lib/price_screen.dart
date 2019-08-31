@@ -24,6 +24,7 @@ class _PriceScreenState extends State<PriceScreen> {
         setState(() {
           selectedCurrency = value;
         });
+        getData(value);
       },
     );
   }
@@ -37,17 +38,17 @@ class _PriceScreenState extends State<PriceScreen> {
       backgroundColor: Colors.lightBlue,
       itemExtent: 32.0,
       onSelectedItemChanged: (selectedIndex) {
-        print(selectedIndex);
+        getData((currenciesList[selectedIndex]));
       },
       children: list,
     );
   }
 
-  void getData() async {
+  void getData(String currency) async {
     try {
-      double data = await CoinData().getCoinData();
+      double data = await CoinData().getCoinData(currency);
       setState(() {
-        btcText = '1 BTC = ${data.toStringAsFixed(2)} USD';
+        btcText = '1 BTC = ${data.toStringAsFixed(2)} $currency';
       });
     } catch (e) {
       print(e);
@@ -57,7 +58,7 @@ class _PriceScreenState extends State<PriceScreen> {
   @override
   void initState() {
     super.initState();
-    getData();
+    getData('USD');
   }
 
   @override
@@ -96,7 +97,7 @@ class _PriceScreenState extends State<PriceScreen> {
               alignment: Alignment.center,
               padding: EdgeInsets.only(bottom: 32.0),
               color: Colors.lightBlue,
-              child: Platform.isIOS ? iOSPicker() : androidDropdown()),
+              child: Platform.isIOS ? iOSPicker() : iOSPicker()),
         ],
       ),
     );
