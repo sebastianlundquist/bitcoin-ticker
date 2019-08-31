@@ -1,3 +1,5 @@
+import 'networking.dart';
+
 const List<String> currenciesList = [
   'AUD',
   'BRL',
@@ -28,4 +30,11 @@ const List<String> cryptoList = [
   'LTC',
 ];
 
-class CoinData {}
+class CoinData {
+  Future<double> getCoinData() async {
+    NetworkHelper networkHelper = NetworkHelper(
+        'https://apiv2.bitcoinaverage.com/indices/global/ticker/BTCUSD');
+    Map<String, dynamic> coinData = await networkHelper.getData();
+    return coinData['last'];
+  }
+}
